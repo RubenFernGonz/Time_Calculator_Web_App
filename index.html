@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es-ES">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Tiempo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="cabecera">
+        <h1>Calculadora de Tiempo</h1>
+    </div>
+
+    <div class="formulario">
+        <form action="#">
+            <table>
+                <thead>
+                    <tr>
+                        <th>
+                            <button onclick="introducir()">Introducir</button>
+                        </th>
+                        <th>
+                            <button onclick="mostrarTotal()">Mostrar Total</button>
+                        </th>
+                        <th>
+                            <button onclick="borrar()">Limpiar</button>
+                        </th>
+                        <th>
+                            <input type="file" id="archivoTiempo" accept=".txt">
+                            <button onclick="leerArchivo()">Cargar archivo</button>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                  
+                </tbody>
+            </table>
+        </form>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>
+                    <label for="horasL">Horas</label>
+                </th>
+                <th>
+                    <label for="minutosL">Minutos</label>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <input type="text" id="horasL">
+                </td>
+                <td>
+                    <input type="text" id="minutosL">
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="listaHoras">
+        <table id="tablaHoras">
+            <thead>
+                <tr>
+                    <th>Horas</th>
+                    <th>Minutos</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="resultado"></div>
+
+
+    <script src="script.js"></script>
+</body>
+
+</html>
