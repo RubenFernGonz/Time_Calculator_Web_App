@@ -20,6 +20,10 @@ function agregarHorasMinutos(horas, minutos) {
 
   celdaHoras.textContent = horas;
   celdaMinutos.textContent = minutos;
+
+  // Limpiar los campos de entrada
+  inputHoras.value = '';
+  inputMinutos.value = '';
 }
 
 // Agregar un evento al botón "Calcular" para ejecutar la función agregarHorasMinutos
@@ -27,32 +31,28 @@ function introducir() {
   const horas = inputHoras.value;
   const minutos = inputMinutos.value;
 
-  // Validar que los campos no estén vacíos
+  // Validar que los campos no estén vacíos y sean números enteros
   if (horas && minutos && Number.isInteger(Number(horas)) && Number.isInteger(Number(minutos))) {
     // Agregar los valores al array y a la tabla
     agregarHorasMinutos(horas, minutos);
-
-    // Limpiar los campos de entrada
-    inputHoras.value = "";
-    inputMinutos.value = "";
   } else {
     alert("Introduce números enteros");
-    // Limpiar los campos de entrada
-    inputHoras.value = "";
-    inputMinutos.value = "";
   }
-};
+
+  // Limpiar los campos de entrada
+  inputHoras.value = "";
+  inputMinutos.value = "";
+}
 
 function mostrarTotal() {
   let totalHoras = 0;
   let totalMinutos = 0;
 
   // Sumar las horas y minutos del array
-  for (let i = 0; i < horasMinutosArray.length; i++) {
-    const { horas, minutos } = horasMinutosArray[i];
+  horasMinutosArray.forEach(({ horas, minutos }) => {
     totalHoras += Number(horas);
     totalMinutos += Number(minutos);
-  }
+  });
 
   // Convertir los minutos excedentes en horas si superan 60 minutos
   const horasExtra = Math.floor(totalMinutos / 60);
@@ -66,7 +66,7 @@ function mostrarTotal() {
 
 function borrar() {
   // Vaciar el array
-  horasMinutosArray.splice(0, horasMinutosArray.length);
+  horasMinutosArray.length = 0;
 
   // Eliminar las filas de la tabla
   tablaHoras.innerHTML = "<thead><tr><th>Horas</th><th>Minutos</th></tr></thead>";
@@ -83,13 +83,13 @@ function mostrarDatosTabla() {
   }
 
   // Recorrer el array y agregar los valores a la tabla
-  horasMinutosArray.forEach((elemento) => {
+  horasMinutosArray.forEach(({ horas, minutos }) => {
     const fila = tablaHoras.insertRow();
     const celdaHoras = fila.insertCell();
     const celdaMinutos = fila.insertCell();
 
-    celdaHoras.textContent = elemento.horas;
-    celdaMinutos.textContent = elemento.minutos;
+    celdaHoras.textContent = horas;
+    celdaMinutos.textContent = minutos;
   });
 }
 
@@ -105,48 +105,50 @@ function leerArchivo() {
   lector.readAsText(archivo);
 }
 
-/*function procesarContenidoTiempo(contenido) {
-  // Dividir el contenido en líneas
+function procesarContenidoTiempo(contenido) {
   const lineas = contenido.trim().split("\n");
+  const formato = detectarFormatoContenido(lineas);
 
-  // Recorrer cada línea y agregar el tiempo a la tabla y el array
+  if (formato === "formato1") {
+    procesarFormato1(lineas);
+  } else if (formato === "formato2") {
+    procesarFormato2(lineas);
+  } else {
+    alert("Formato de contenido no reconocido");
+  }
+}
+
+function detectarFormatoContenido(lineas) {
+    const formato1Regex = /^\s*\d{2}:\d{2}\s*$/;
+  
+    if (lineas.every((linea) => formato1Regex.test(linea))) {
+      return "formato1";
+    }
+  
+    const formato2Regex = /\t\d{2}\/\d{2}\/\d{4}\s+\d{2}:\d{2}:\d{2}\s+\d{2}\/\d{2}\/\d{4}\s+\d{2}:\d{2}:\d{2}\s+\d{2}:\d{2}\s*/;
+  
+    if (lineas.every((linea) => formato2Regex.test(linea))) {
+      return "formato2";
+    }
+  
+    return "desconocido";
+  }
+
+function procesarFormato1(lineas) {
   lineas.forEach((linea) => {
     const [horas, minutos] = linea.trim().split(":");
     agregarHorasMinutos(horas, minutos);
   });
+}
 
-  // Mostrar los datos en la tabla
-  mostrarDatosTabla();
-}*/
-
-
-function procesarContenidoTiempo(contenido) {
-    // Dividir el contenido en líneas
-    const lineas = contenido.trim().split('\n');
-
-    // Recorrer cada línea y agregar el tiempo a la tabla y el array
-    lineas.forEach((linea) => {
-        const [, , , tiempo] = linea.trim().split('\t');
-        const horaMinutos = tiempo.substr(-5);
-
-        const [horas, minutos] = horaMinutos.split(':');
-        agregarTiempoATablaYArray(horas, minutos);
-    });
+function procesarFormato2(lineas) {
+  lineas.forEach((linea) => {
+    const tiempo = linea.trim().split("\t")[3];
+    const [horas, minutos] = tiempo.substr(-5).split(":");
+    agregarHorasMinutos(horas, minutos);
+  });
 }
 
 function agregarTiempoATablaYArray(horas, minutos) {
-    // Agregar los valores al array
-    horasMinutosArray.push({ horas, minutos });
-
-    // Crear una nueva fila en la tabla y agregar los valores
-    const fila = tablaHoras.insertRow();
-    const celdaHoras = fila.insertCell();
-    const celdaMinutos = fila.insertCell();
-
-    celdaHoras.textContent = horas;
-    celdaMinutos.textContent = minutos;
-
-    // Limpiar los campos de entrada
-    inputHoras.value = '';
-    inputMinutos.value = '';
+  agregarHorasMinutos(horas, minutos);
 }
